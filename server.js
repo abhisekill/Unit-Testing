@@ -1,18 +1,19 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const {calculateFare, fareInfo} = require('./utils/fareUtils');
 
 app.use('/',express.static(path.join(__dirname,'public')));
 app.use(express.json())
+
 app.post('/cal',(req,res)=>{
-    let fare = 50;
     const {km,min} = req.body;
-    fare += km > 5 ? (km-5)*10 : 0;
-    fare += min > 15 ? (min-15)*1 : 0;
-    
+    const fare = calculateFare(km,min);
     res.send({totalFare: fare});
 })
 
-app.listen(8080,()=>{
-    console.log("server running at port 8080");
+app.get('/rates',(req,res)=>{
+    res.send(fareInfo);
 })
+
+module.exports = app;
